@@ -34,7 +34,10 @@
   recon2_2_sbml$reaction_notes <-
     recon2_2_sbml$raw$sbml$model$listOfReactions %>%
     map(~.x$notes$body) %>%
-    map_dfr(process_recon2_2)
+    map_dfr(process_recon,
+            heads = c("GENE_ASSOCIATION",
+                      "CONFIDENCE_LEVEL",
+                      "SUBSYSTEM"))
 
   ## clearing the reaction notes
 

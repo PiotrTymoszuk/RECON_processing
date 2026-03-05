@@ -32,15 +32,13 @@
 
   recon2_sbml$reaction_notes <- recon2_sbml$raw$sbml$model$listOfReactions %>%
     map(~.x$notes$body) %>%
-    map(set_names,
-        c("gene_association",
-          "subsystem",
-          "ec_number",
-          "confidence_level",
-          "reference",
-          "notes")) %>%
-    map(as_tibble) %>%
-    map_dfr(map_dfc, unlist)
+    map_dfr(process_recon,
+            heads = c("GENE_ASSOCIATION",
+                      "Ec Number",
+                      "AUTHORS",
+                      "Confidence Level",
+                      "SUBSYSTEM",
+                      "NOTES"))
 
   ## clearing of the reaction notes, simplifying the EntrezIDs
   ## by removal of the version information
@@ -50,8 +48,12 @@
             regex = "^.+:\\s{1}",
             replacement = "") %>%
     map_dfc(~ifelse(.x == "", NA, .x)) %>%
-    mutate(confidence_level = as.integer(confidence_level),
-           gene_association = map_chr(gene_association, entrez_rm_version))
+    transmute(gene_association = GENE_ASSOCIATION,
+              subsystem = SUBSYSTEM,
+              confidence_level = as.numeric(`Confidence Level`),
+              reference = AUTHORS,
+              notes = NOTES) %>%
+    mutate(gene_association = map_chr(gene_association, entrez_rm_version))
 
   ## merging of the reaction information
 

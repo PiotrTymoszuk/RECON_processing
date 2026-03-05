@@ -50,9 +50,13 @@
 
 # wrangling -------
 
-  process_recon2_2 <- function(reaction_note) {
+  process_recon <- function(reaction_note,
+                            heads = c("GENE_ASSOCIATION",
+                                      "CONFIDENCE_LEVEL",
+                                      "SUBSYSTEM")) {
 
-    ## extracts reaction note contents for the Recon 2.2 subsystem
+    ## extracts reaction note contents for the Recon 2.2 model
+    ## specified by the heads character vector
 
     reaction_note <- unlist(reaction_note)
 
@@ -65,9 +69,7 @@
     reaction_note <-
       as_tibble(as.list(set_names(reaction_note, note_heads)))
 
-    reaction_note[, names(reaction_note) %in% c("GENE_ASSOCIATION",
-                                                "CONFIDENCE_LEVEL",
-                                                "SUBSYSTEM")]
+    reaction_note[, names(reaction_note) %in% heads]
 
   }
 
@@ -85,11 +87,14 @@
     ## in a character string with a conversion data frame with
     ## obligatory columns "hgnc_id" and "entrez_id"
 
+    if(is.na(x)) return(x)
+
     ## extraction
 
+    x <- stri_replace_all(x, fixed = "HGNC:HGNC:", replacement = "HGNC:")
+
     hgnc_txt <-
-      sort(stri_extract_all(x, regex = "HGNC:\\d+")[[1]],
-           decreasing = TRUE)
+      unique(unlist(stri_extract_all(x, regex = "HGNC:\\d+")))
 
     entrez_txt <- exchange(hgnc_txt,
                            conversion_df,
@@ -98,9 +103,9 @@
 
     for(i in names(entrez_txt)) {
 
-      x <- stri_replace(x,
-                        fixed = i,
-                        replacement = entrez_txt[[i]])
+      x <- stri_replace_all(x,
+                            regex = paste0(i, "(?!\\d+)"),
+                            replacement = entrez_txt[[i]])
 
     }
 
