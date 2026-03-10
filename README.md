@@ -22,8 +22,8 @@ Sourcing of `exec.R` launches the whole import, wrangling and export pipeline:
 
 Cleared data frames with reaction identifiers, subsystem assignment, and gene - reaction 
 association rules for 
-[Recon 2](https://www.ebi.ac.uk/biomodels/services/download/get-files/MODEL1109130000/2/MODEL1109130000_url.xml) 
-and [Recon2.2](https://www.biomodels.org/biomodels/services/download/get-files/MODEL1603150001/2/MODEL1603150001_url.xml) 
+[Recon 2](https://www.ebi.ac.uk/biomodels/MODEL1109130000) 
+and [Recon2.2](https://www.ebi.ac.uk/biomodels/MODEL1603150001) 
 models are available in the [downloads folder](https://github.com/PiotrTymoszuk/RECON_processing/tree/main/downloads).
 
 ## Terms of use
