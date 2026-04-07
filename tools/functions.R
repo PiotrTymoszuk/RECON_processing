@@ -113,4 +113,34 @@
 
   }
 
+  ensembl2entrez <- function(x, conversion_df = hgnc_dataset) {
+
+    ## converts HGNC identifiers to EntrezIDs
+    ## in a character string with a conversion data frame with
+    ## obligatory columns "ensembl_gene_id" and "entrez_id"
+
+    if(is.na(x)) return(x)
+
+    ensembl_txt <-
+      unique(unlist(stri_extract_all(x, regex = "ENSG\\d+")))
+
+    entrez_txt <- exchange(ensembl_txt,
+                           conversion_df,
+                           key = "ensembl_gene_id",
+                           value = "entrez_id")
+
+    if(any(is.na(entrez_txt))) return(NA)
+
+    for(i in names(entrez_txt)) {
+
+      x <- stri_replace_all(x,
+                            regex = paste0(i, "(?!\\d+)"),
+                            replacement = entrez_txt[[i]])
+
+    }
+
+    return(x)
+
+  }
+
 # END ------
